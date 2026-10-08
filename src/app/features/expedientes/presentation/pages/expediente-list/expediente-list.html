@@ -1,0 +1,65 @@
+<section class="header">
+  <h1>Expedientes</h1>
+  <a matButton="filled" routerLink="nuevo">
+    <mat-icon>add</mat-icon>
+    Nuevo expediente
+  </a>
+</section>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+<div class="table-wrapper">
+  <table mat-table [dataSource]="expedientes()">
+    <ng-container matColumnDef="numero">
+      <th mat-header-cell *matHeaderCellDef>Número</th>
+      <td mat-cell *matCellDef="let e">{{ e.numero }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="fecha">
+      <th mat-header-cell *matHeaderCellDef>Fecha</th>
+      <td mat-cell *matCellDef="let e">{{ e.fecha }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="descripcion">
+      <th mat-header-cell *matHeaderCellDef>Descripción</th>
+      <td mat-cell *matCellDef="let e">{{ e.descripcion }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="fechaCarga">
+      <th mat-header-cell *matHeaderCellDef>Fecha de carga</th>
+      <td mat-cell *matCellDef="let e">{{ e.fechaCarga | date: 'dd/MM/yyyy HH:mm' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef class="actions-col">Acciones</th>
+      <td mat-cell *matCellDef="let e" class="actions-col">
+        <a matIconButton [routerLink]="[e.id, 'editar']" matTooltip="Editar" aria-label="Editar">
+          <mat-icon>edit</mat-icon>
+        </a>
+        <button matIconButton (click)="eliminar(e)" matTooltip="Eliminar" aria-label="Eliminar">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns"></tr>
+
+    <tr class="mat-row" *matNoDataRow>
+      <td class="empty" [attr.colspan]="columns.length">
+        {{ loading() ? 'Cargando…' : 'No hay expedientes cargados' }}
+      </td>
+    </tr>
+  </table>
+</div>
+
+<mat-paginator
+  [length]="total()"
+  [pageIndex]="pageIndex()"
+  [pageSize]="pageSize()"
+  [pageSizeOptions]="pageSizeOptions"
+  (page)="onPage($event)"
+  showFirstLastButtons
+/>
